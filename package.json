@@ -1,0 +1,26 @@
+{
+  "name": "suno-songs-agenda",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "update suno songs",
+  "main": "index.js",
+  "scripts": {
+    "jobs": "node --env-file=.env ./index.js",
+    "test": "node --env-file=.env ./testJobs.js"
+  },
+  "author": "lban",
+  "dependencies": {
+    "@hokify/agenda": "^6.3.0",
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
+    "date-fns": "^3.6.0",
+    "franc": "^6.2.0",
+    "http-proxy-agent": "^7.0.2",
+    "https-proxy-agent": "^7.0.4",
+    "languagedetect": "^2.0.0",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
+    "mongoose": "^7.4.1",
+    "music-metadata": "^7.14.0"
+  }
+}
