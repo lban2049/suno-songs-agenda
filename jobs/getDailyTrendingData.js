@@ -43,6 +43,12 @@ async function getDailyTrendingData() {
 
       const language = franc(clip.metadata.prompt);
 
+      let rankValue = 0;
+      if (clip.upvote_count !== undefined && clip.play_count !== undefined) {
+        rankValue = clip.upvote_count * 0.7 + clip.play_count * 0.3;
+      }
+
+
       const songId = clip.id;
       const songData = {
         name: clip.title,
@@ -75,6 +81,7 @@ async function getDailyTrendingData() {
         },
         praiseCount: clip.upvote_count,
         playCount: clip.play_count,
+        rankValue,
         trendingSortNo: 10,
       };
 
@@ -92,6 +99,7 @@ async function getDailyTrendingData() {
           {
             playCount: songData.playCount,
             praiseCount: songData.praiseCount,
+            rankValue: songData.rankValue,
             updateDate: new Date(),
           }
         );

@@ -18,46 +18,43 @@ const langdict = {
 };
 
 // create a new playlist for the weekly trending songs
-async function createLanguageWeeklyTrending(language, songs) {
+async function createLanguageWeeklyTrending(language) {
   // sort songs based on the calculated score in descending order
   const dictLanguage = langdict[language];
-  const languageSongs = songs.filter(
-    (item) => item.language === dictLanguage
-  );
+
+  // find top 50 songs filter by language
+  const languageSongs = await Song.find({ language: dictLanguage })
+    .sort({ rankValue: -1 }).limit(50).exec();
 
   if (languageSongs.length === 0) {
-    console.log(`No ${language} songs found in the last 7 days`);
+    console.log(`No ${language} songs found `);
     return;
   }
 
-  console.log(`Found ${languageSongs.length} ${language} songs in the last 7 days`);
-  languageSongs.sort((a, b) => {
-    const scoreA = a.praiseCount * 0.7 + a.playCount * 0.3;
-    const scoreB = b.praiseCount * 0.7 + b.playCount * 0.3;
-    return scoreB - scoreA;
-  });
+  console.log(
+    `Found ${languageSongs.length} ${language} songs`
+  );
 
   // create a new playlist for the weekly trending songs
   const now = new Date();
   const currentWeek = getWeek(now);
-  const weeklySongs = languageSongs.slice(0, 50);
   const playlist = new SongPlaylist({
     name: `${language} Trending ${now.getFullYear()}-${currentWeek}`,
     description: "Weekly trending songs",
     type: "playlist",
     explicitContent: false,
-    songCount: weeklySongs.length,
+    songCount: languageSongs.length,
     language: dictLanguage,
     isModule: false,
     url: "",
     image: [
       {
         quality: "150x150",
-        url: weeklySongs[0]?.image[0]?.url,
+        url: languageSongs[0]?.image[0]?.url,
       },
     ],
     isWeekly: true,
-    songs: weeklySongs.map((song) => song._id),
+    songs: languageSongs.map((song) => song._id),
     artists: [],
   });
 
@@ -79,57 +76,12 @@ async function createWeeklyTrending() {
 
     console.log("connected to db");
 
-    const currentDate = new Date();
-    const sevenDaysAgo = new Date(
-      currentDate.getTime() - 7 * 24 * 60 * 60 * 1000
-    );
-
-    // find all songs that were updated in the last 7 days
-    const songs = await Song.find({
-      updateDate: { $gte: sevenDaysAgo },
-    }).exec();
-
-    if (songs.length === 0) {
-      console.log("No songs found in the last 7 days");
-      return;
-    }
-
-    console.log(`Found ${songs.length} songs in the last 7 days`);
-
-    // update praise count for each song
-    for (const song of songs) {
-      try {
-        const id = song.url.substring(
-          song.url.lastIndexOf("/") + 1,
-          song.url.lastIndexOf(".mp3")
-        );
-        console.log(`Fetching song ${song.name} with id ${id}`);
-        const songUrl = `https://suno.com/song/${id}/`;
-        const response = await axios.get(songUrl, {
-          // httpAgent,
-          // httpsAgent,
-        });
-        const $ = cheerio.load(response.data);
-        const playCountNode = $("p.css-pms8ea");
-        const praiseCount = playCountNode.first().text().trim();
-
-        song.praiseCount = praiseCount;
-        await song.save();
-
-        console.log(`Updated song ${song.name} with ${praiseCount} likes`);
-      } catch (error) {
-        console.error(`Failed to update song ${song.name}: ${error.message}`);
-      }
-    }
-
-    console.log("Created Weekly Trending playlist");
-
-    await createLanguageWeeklyTrending("English", songs);
-    await createLanguageWeeklyTrending("Russian", songs);
-    await createLanguageWeeklyTrending("Chinese", songs);
+    await createLanguageWeeklyTrending("English");
+    await createLanguageWeeklyTrending("Russian");
+    await createLanguageWeeklyTrending("Chinese");
 
   } catch (error) {
-    console.error(`Failed to connect to db: ${error.message}`);
+    console.error(`create weekly list error: ${error.message}`);
   }
   console.log("========== create weekly list end ==========");
 }

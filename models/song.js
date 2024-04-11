@@ -38,6 +38,7 @@ const songSchema = new mongoose.Schema(
     },
     url: String,
     copyright: String,
+    rankValue: Number, // weekly\monthly top playlist sort
     suggestionSongs: [
       {
         type: mongoose.Schema.Types.ObjectId,
