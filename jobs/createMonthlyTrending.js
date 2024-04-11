@@ -1,8 +1,8 @@
 import axios from "axios";
-import Song from "../../src/models/song.js";
+import Song from "../models/song.js";
 import mongoose from "mongoose";
 import cheerio from "cheerio";
-import SongPlaylist from "../../src/models/songplaylist.js";
+import SongPlaylist from "../models/songplaylist.js";
 import { getWeek } from "date-fns";
 
 import { HttpProxyAgent } from "http-proxy-agent";
@@ -12,6 +12,7 @@ const httpAgent = new HttpProxyAgent("http://127.0.0.1:10808");
 const httpsAgent = new HttpsProxyAgent("http://127.0.0.1:10808");
 
 async function createMonthlyTrending() {
+  console.log("========== create monthly list start ==========");
   try {
     const mongoUrl = process.env.MONGODB_URL;
     const mongoDb = process.env.DB_NAME;
@@ -34,11 +35,11 @@ async function createMonthlyTrending() {
     }).exec();
 
     if (songs.length === 0) {
-      console.log("No songs found in the last 7 days");
+      console.log("No songs found in the last 30 days");
       return;
     }
 
-    console.log(`Found ${songs.length} songs in the last 7 days`);
+    console.log(`Found ${songs.length} songs in the last 30 days`);
 
     // update praise count for each song
     for (const song of songs) {
@@ -92,16 +93,17 @@ async function createMonthlyTrending() {
           url: monthSongs[0]?.image[0]?.url,
         },
       ],
+      isMonthly: true,
       songs: monthSongs.map((song) => song._id),
       artists: [],
     });
 
     await playlist.save();
-
-    console.log("Monthly Trending playlist created successfully");
   } catch (error) {
     console.error(`Failed to connect to db: ${error.message}`);
   }
+
+  console.log("========== create monthly list end ==========");
 }
 
 export default createMonthlyTrending;

@@ -54,5 +54,5 @@ artistSchema.virtual('id').get(function() {
 
 artistSchema.set('toJSON', { virtuals: true });
 
-module.exports = mongoose.models.artist ||
+export default mongoose.models.artist ||
   mongoose.model("artist", artistSchema, "artist");

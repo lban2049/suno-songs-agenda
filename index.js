@@ -15,11 +15,6 @@ if (!mongoConnectionString) {
 
 const agenda = new Agenda({db: {address: mongoConnectionString}});
 
-// agenda.define('example', (job, done) => {
-//   console.log(new Date(), 'Example job');
-//   done();
-// });
-
 // Obtain the trending list daily at midnight.
 agenda.define('getDailyTrendingData', async (job) => {
   console.log(new Date(), 'Get daily trending data');
@@ -50,9 +45,11 @@ agenda.define('createMonthlyTrending', async (job) => {
 
   // Add Language Weekly Ranking List.
   await agenda.every('10 0 * * 3', 'createWeeklyTrending');
+  // await agenda.every('10 seconds', 'createWeeklyTrending'); // test
 
   // Add Monthly Ranking List.
   await agenda.every('30 0 1 * *', 'createMonthlyTrending');
+  // await agenda.every('10 seconds', 'createMonthlyTrending'); // test
 
   agenda.on('start', (job) => {
     console.log(time(), `Job <${job.attrs.name}> starting`);

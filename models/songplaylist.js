@@ -22,6 +22,8 @@ const playlistSchema = new mongoose.Schema(
       default: 0,
     }, // 用于排序
     url: String,
+    isWeekly: Boolean, // 为 true 时，显示在首页 Weekly 列表
+    isMonthly: Boolean, // 为 true 时，显示在首页 Monthly 列表
     image: [imageSchema],
     songs: [
       {
@@ -45,5 +47,5 @@ playlistSchema.virtual('id').get(function() {
 
 playlistSchema.set('toJSON', { virtuals: true });
 
-module.exports = mongoose.models.songPlaylist ||
+export default mongoose.models.songPlaylist ||
   mongoose.model("songPlaylist", playlistSchema, "songPlaylist");

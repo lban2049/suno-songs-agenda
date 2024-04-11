@@ -15,5 +15,5 @@ lyricsSchema.virtual('id').get(function() {
 
 lyricsSchema.set('toJSON', { virtuals: true });
 
-module.exports = mongoose.models.lyrics ||
+export default mongoose.models.lyrics ||
   mongoose.model("lyrics", lyricsSchema, "lyrics");

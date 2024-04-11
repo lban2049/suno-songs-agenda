@@ -1,5 +1,5 @@
 import axios from "axios";
-import Song from "..//models/song.js";
+import Song from "../models/song.js";
 import mongoose from "mongoose";
 import cheerio from "cheerio";
 import SongPlaylist from "../models/songplaylist.js";
@@ -42,7 +42,7 @@ async function createLanguageWeeklyTrending(language, songs) {
   const currentWeek = getWeek(now);
   const weeklySongs = languageSongs.slice(0, 50);
   const playlist = new SongPlaylist({
-    name: `${language} Weekly Trending ${now.getFullYear()}-${currentWeek}`,
+    name: `${language} Trending ${now.getFullYear()}-${currentWeek}`,
     description: "Weekly trending songs",
     type: "playlist",
     explicitContent: false,
@@ -56,6 +56,7 @@ async function createLanguageWeeklyTrending(language, songs) {
         url: weeklySongs[0]?.image[0]?.url,
       },
     ],
+    isWeekly: true,
     songs: weeklySongs.map((song) => song._id),
     artists: [],
   });
@@ -65,6 +66,8 @@ async function createLanguageWeeklyTrending(language, songs) {
 }
 
 async function createWeeklyTrending() {
+  console.log("========== create weekly list start ==========");
+
   try {
     const mongoUrl = process.env.MONGODB_URL;
     const mongoDb = process.env.DB_NAME;
@@ -125,10 +128,10 @@ async function createWeeklyTrending() {
     await createLanguageWeeklyTrending("Russian", songs);
     await createLanguageWeeklyTrending("Chinese", songs);
 
-    console.log("Weekly Trending playlist created successfully");
   } catch (error) {
     console.error(`Failed to connect to db: ${error.message}`);
   }
+  console.log("========== create weekly list end ==========");
 }
 
 export default createWeeklyTrending;

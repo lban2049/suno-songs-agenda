@@ -10,6 +10,7 @@ import { franc } from "franc";
 
 async function getDailyTrendingData() {
   try {
+    console.log("========== get daily trending data start ==========");
     const mongoUrl = process.env.MONGODB_URL;
     const mongoDb = process.env.DB_NAME;
     await mongoose.connect(mongoUrl, {
@@ -107,13 +108,12 @@ async function getDailyTrendingData() {
       }
     }
 
-    console.log("get daily trending data done");
-
     await mongoose.connection.close();
     console.log("close db connection");
   } catch (error) {
     console.error("get daily trending data failed", error);
   }
+  console.log("========== get daily trending data end ==========");
 }
 
 export default getDailyTrendingData;

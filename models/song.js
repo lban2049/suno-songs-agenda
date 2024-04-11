@@ -79,5 +79,5 @@ const songSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.models.song ||
+export default mongoose.models.song ||
   mongoose.model("song", songSchema, "song");

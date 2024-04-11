@@ -59,5 +59,5 @@ albumSchema.virtual('id').get(function() {
 
 albumSchema.set('toJSON', { virtuals: true });
 
-module.exports = mongoose.models.album ||
+export default mongoose.models.album ||
   mongoose.model("album", albumSchema, "album");
