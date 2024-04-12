@@ -39,3 +39,21 @@ npm run jobs
 ```
 npm run test
 ```
+**运行使用了 --env-file 参数，node 版本需 >= 20**
+
+## 服务器部署
+
+建议使用 forever 守护进程工具，安装：
+
+```
+npm install forever -g
+```
+
+运行定时任务：
+
+```
+cd /projectdir/
+forever start -c "npm run jobs" ./
+```
+
+/projectdir/ 是项目代码所在目录
